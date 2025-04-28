@@ -7,6 +7,7 @@ import {
   Delete,
   Query,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -37,7 +38,6 @@ export class PlayersController {
     if (!createPlayerDTO.email) {
       throw new BadRequestException('Email is required');
     }
-
     await this.playersServices.createUpdatePlayer(createPlayerDTO);
   }
 
@@ -53,15 +53,12 @@ export class PlayersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a player by ID' })
-  @ApiParam({ name: 'id', description: 'Player ID', type: Number })
+  @ApiParam({ name: 'id', description: 'Player ID', type: String })
   @ApiResponse({ status: 200, description: 'Player retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Player not found' })
-  async findPlayerById(id: string): Promise<IPlayer> {
-    const player = await this.playerModel.findById(id).exec();
-    if (!player) {
-      throw new NotFoundException(`Player with ID ${id} not found`);
-    }
-    return player;
+  async findPlayerById(@Param('id') id: string): Promise<IPlayer> {
+    // Instead of accessing the model directly, call the service
+    return this.playersServices.findPlayerById(id);
   }
 
   @Get('search')
