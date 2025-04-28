@@ -54,7 +54,9 @@ export class RankingService {
     }
   }
 
-  async getRankedPlayers(): Promise<IPlayer[]> {
-    return await this.playerModel.find().sort({ totalPoints: -1 }).exec();
+  async getRankedPlayers(category?: string): Promise<IPlayer[]> {
+    const filter = category ? { ranking: category } : {};
+
+    return await this.playerModel.find(filter).sort({ totalPoints: -1 }).exec();
   }
 }
