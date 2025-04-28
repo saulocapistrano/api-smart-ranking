@@ -20,4 +20,10 @@ export class RankingController {
   async getRanking(@Query('category') category?: string): Promise<IPlayer[]> {
     return this.rankingService.getRankedPlayers(category);
   }
+
+  @Get('top')
+  @ApiOperation({ summary: 'List the top players' })
+  async getTopPlayers(): Promise<IPlayer[]> {
+    return this.rankingService.getTopPlayers(10);
+  }
 }
