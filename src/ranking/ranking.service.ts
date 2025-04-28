@@ -59,4 +59,12 @@ export class RankingService {
 
     return await this.playerModel.find(filter).sort({ totalPoints: -1 }).exec();
   }
+
+  async getTopPlayers(limit: number = 10): Promise<IPlayer[]> {
+    return await this.playerModel
+      .find()
+      .sort({ totalPoints: -1 })
+      .limit(limit)
+      .exec();
+  }
 }
