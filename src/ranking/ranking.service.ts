@@ -53,4 +53,8 @@ export class RankingService {
       await player.save();
     }
   }
+
+  async getRankedPlayers(): Promise<IPlayer[]> {
+    return await this.playerModel.find().sort({ totalPoints: -1 }).exec();
+  }
 }
