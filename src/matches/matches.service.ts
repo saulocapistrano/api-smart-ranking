@@ -4,16 +4,27 @@ import { Model } from 'mongoose';
 import { Match } from './interfaces/match.interface';
 import { CreateMatchDto } from './dtos/create-match.dto';
 import { UpdateMatchDto } from './dtos/update-match.dto';
+import { RankingService } from 'src/ranking/ranking.service';
 
 @Injectable()
 export class MatchesService {
   constructor(
     @InjectModel('Match') private readonly matchModel: Model<Match>,
+    private readonly rankingService: RankingService,
   ) {}
 
   async create(createMatchDto: CreateMatchDto): Promise<Match> {
     const createdMatch = new this.matchModel(createMatchDto);
-    return await createdMatch.save();
+    const match = await createdMatch.save();
+
+    // Atualiza Ranking Automaticamente
+    await this.rankingService.updateRanking(
+      createMatchDto.winner,
+      createMatchDto.players.find((p) => p !== createMatchDto.winner),
+      createMatchDto.result,
+    );
+
+    return match;
   }
 
   async findAll(): Promise<Match[]> {
